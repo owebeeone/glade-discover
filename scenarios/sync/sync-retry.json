@@ -1,0 +1,24 @@
+{
+  "seed": 503,
+  "event_budget": 200,
+  "nodes": [
+    {"id":"node-a","principal":"principal-a","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[]},
+    {"id":"node-b","principal":"principal-b","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[]}
+  ],
+  "links": [{"a":"node-a","b":"node-b","latency_ms":1,"faults":[{"kind":"partition","start_ms":0,"end_ms":15000}]}],
+  "inputs": [
+    {"input_id":"start","at_ms":0,"node":"node-a","event":{"kind":"wakeup","token":{"kind":"gossip_tick","peer":"node-b"}}},
+    {"input_id":"timeout-0","at_ms":10000,"node":"node-a","event":{"kind":"wakeup","token":{"kind":"sync_timeout","peer":"node-b","sync_id":"node-a:0","attempt":0}}},
+    {"input_id":"deliver-retry","at_ms":16000,"node":"node-b","event":{"kind":"deliver","from":"node-a","msg":{"kind":"sync_start","sync_id":"node-a:0","heads":[]}}},
+    {"input_id":"deliver-end","at_ms":16001,"node":"node-a","event":{"kind":"deliver","from":"node-b","msg":{"kind":"sync_end","sync_id":"node-a:0"}}}
+  ],
+  "verifier_fixtures": [],
+  "stop":{"kind":"at_ms","at_ms":17000},
+  "expect":[
+    {"when":{"kind":"at_ms","at_ms":0},"kind":"effect","node":"node-a","effect":{"kind":"gossip","to":"node-b","msg":{"kind":"sync_start","sync_id":"node-a:0","heads":[]}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":10000},"kind":"effect","node":"node-a","effect":{"kind":"gossip","to":"node-b","msg":{"kind":"sync_start","sync_id":"node-a:0","heads":[]}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":10000},"kind":"effect","node":"node-a","effect":{"kind":"schedule","token":{"kind":"sync_timeout","peer":"node-b","sync_id":"node-a:0","attempt":1},"at_mono":20000},"count":1},
+    {"when":{"kind":"at_ms","at_ms":16000},"kind":"effect","node":"node-b","effect":{"kind":"gossip","to":"node-a","msg":{"kind":"sync_end","sync_id":"node-a:0"}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":17000},"kind":"state","node":"node-a","assertion":{"kind":"sync","peer":"node-b","sync_id":"node-a:0","status":"complete"}}
+  ]
+}

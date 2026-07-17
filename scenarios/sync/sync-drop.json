@@ -1,0 +1,25 @@
+{
+  "seed": 502,
+  "event_budget": 200,
+  "nodes": [
+    {"id":"node-a","principal":"principal-a","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[]},
+    {"id":"node-b","principal":"principal-b","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[]}
+  ],
+  "links": [{"a":"node-a","b":"node-b","latency_ms":1,"faults":[{"kind":"loss","start_ms":0,"end_ms":40001,"probability_ppm":1000000}]}],
+  "inputs": [
+    {"input_id":"start","at_ms":0,"node":"node-a","event":{"kind":"wakeup","token":{"kind":"gossip_tick","peer":"node-b"}}},
+    {"input_id":"timeout-0","at_ms":10000,"node":"node-a","event":{"kind":"wakeup","token":{"kind":"sync_timeout","peer":"node-b","sync_id":"node-a:0","attempt":0}}},
+    {"input_id":"timeout-1","at_ms":20000,"node":"node-a","event":{"kind":"wakeup","token":{"kind":"sync_timeout","peer":"node-b","sync_id":"node-a:0","attempt":1}}},
+    {"input_id":"timeout-2","at_ms":30000,"node":"node-a","event":{"kind":"wakeup","token":{"kind":"sync_timeout","peer":"node-b","sync_id":"node-a:0","attempt":2}}},
+    {"input_id":"timeout-3","at_ms":40000,"node":"node-a","event":{"kind":"wakeup","token":{"kind":"sync_timeout","peer":"node-b","sync_id":"node-a:0","attempt":3}}}
+  ],
+  "verifier_fixtures": [],
+  "stop":{"kind":"at_ms","at_ms":40000},
+  "expect":[
+    {"when":{"kind":"at_ms","at_ms":0},"kind":"effect","node":"node-a","effect":{"kind":"gossip","to":"node-b","msg":{"kind":"sync_start","sync_id":"node-a:0","heads":[]}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":10000},"kind":"effect","node":"node-a","effect":{"kind":"gossip","to":"node-b","msg":{"kind":"sync_start","sync_id":"node-a:0","heads":[]}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":20000},"kind":"effect","node":"node-a","effect":{"kind":"gossip","to":"node-b","msg":{"kind":"sync_start","sync_id":"node-a:0","heads":[]}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":30000},"kind":"effect","node":"node-a","effect":{"kind":"gossip","to":"node-b","msg":{"kind":"sync_start","sync_id":"node-a:0","heads":[]}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":40000},"kind":"state","node":"node-a","assertion":{"kind":"sync","peer":"node-b","sync_id":"node-a:0","status":"stale"}}
+  ]
+}

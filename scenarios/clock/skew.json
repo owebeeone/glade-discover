@@ -1,0 +1,26 @@
+{
+  "seed": 203,
+  "event_budget": 250,
+  "nodes": [
+    {"id":"publisher","principal":"node-principal-b","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[]},
+    {"id":"router","principal":"owner-a","owns":["workspace-a"],"seed_grants":[],"clock":{"initial_wall_ms":106000,"initial_mono_ms":0,"changes":[]},"restarts":[]}
+  ],
+  "links": [{"a":"publisher","b":"router","latency_ms":1,"faults":[]}],
+  "inputs": [
+    {"input_id":"grant","at_ms":0,"node":"router","event":{"kind":"deliver","from":"publisher","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f72790341b304676f776e65722d61050006f60701088009010a585ea30101020203a601a301a3016b776f726b73706163652d6102696469726563746f72790341b302676f776e65722d61030002676f776e65722d6103706e6f64652d7072696e636970616c2d62046b776f726b73706163652d6105810006f60b42a55a"}}}},
+    {"input_id":"claim","at_ms":1,"node":"router","event":{"kind":"deliver","from":"publisher","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f727903410104706e6f64652d7072696e636970616c2d62050006f60701088009010a5884a30101020003a601697075626c6973686572026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102706e6f64652d7072696e636970616c2d62030004a301a3016b776f726b73706163652d6102696469726563746f72790341b302676f776e65722d610300051a0001b58006000b42a55a"}}}},
+    {"input_id":"route-live","at_ms":2,"node":"router","event":{"kind":"route","ingress":"ingress-a","principal":"reader-a","authenticated_context_hex":"12","corr":"skew-live","query":{"kind":"workspace","share":"workspace-a"}}},
+    {"input_id":"route-margin-expired","at_ms":1000,"node":"router","event":{"kind":"route","ingress":"ingress-a","principal":"reader-a","authenticated_context_hex":"12","corr":"skew-expired","query":{"kind":"workspace","share":"workspace-a"}}}
+  ],
+  "verifier_fixtures": [
+    {"selector":{"kind":"input","input_id":"grant","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"owner-a"}},
+    {"selector":{"kind":"input","input_id":"claim","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"node-principal-b"}}
+  ],
+  "stop":{"kind":"at_ms","at_ms":1000},
+  "expect":[
+    {"when":{"kind":"at_ms","at_ms":2},"kind":"route","node":"router","ingress":"ingress-a","corr":"skew-live","ans":{"kind":"matched","node":"publisher"}},
+    {"when":{"kind":"at_ms","at_ms":1000},"kind":"route","node":"router","ingress":"ingress-a","corr":"skew-expired","ans":{"kind":"no_claim"}},
+    {"when":{"kind":"at_ms","at_ms":1000},"kind":"effect","node":"router","effect":{"kind":"reply","ingress":"ingress-a","corr":"skew-expired","ans":{"kind":"no_claim"}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":1000},"kind":"state","node":"router","assertion":{"kind":"clock","value":{"kind":"ready","watermark":107000}}}
+  ]
+}

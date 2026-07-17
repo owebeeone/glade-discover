@@ -1,0 +1,30 @@
+{
+  "seed": 501,
+  "event_budget": 300,
+  "nodes": [
+    {"id":"node-a","principal":"principal-a","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[]},
+    {"id":"node-b","principal":"owner-sync","owns":["workspace-sync"],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[]}
+  ],
+  "links": [],
+  "inputs": [
+    {"input_id":"seed-op","at_ms":0,"node":"node-b","event":{"kind":"deliver","from":"node-b","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016e776f726b73706163652d73796e6302696469726563746f7279034171046a6f776e65722d73796e63050006f60701088009010a5864a30101020203a601a301a3016e776f726b73706163652d73796e6302696469726563746f7279034171026a6f776e65722d73796e630300026a6f776e65722d73796e63036a6f776e65722d73796e63046e776f726b73706163652d73796e6305810006f60b42a55a"}}}},
+    {"input_id":"start-round","at_ms":1,"node":"node-a","event":{"kind":"wakeup","token":{"kind":"gossip_tick","peer":"node-b"}}},
+    {"input_id":"deliver-start","at_ms":2,"node":"node-b","event":{"kind":"deliver","from":"node-a","msg":{"kind":"sync_start","sync_id":"node-a:0","heads":[]}}},
+    {"input_id":"deliver-ops","at_ms":3,"node":"node-a","event":{"kind":"deliver","from":"node-b","msg":{"kind":"sync_ops","sync_id":"node-a:0","ops":[{"canonical_hex":"ab016e776f726b73706163652d73796e6302696469726563746f7279034171046a6f776e65722d73796e63050006f60701088009010a5864a30101020203a601a301a3016e776f726b73706163652d73796e6302696469726563746f7279034171026a6f776e65722d73796e630300026a6f776e65722d73796e63036a6f776e65722d73796e63046e776f726b73706163652d73796e6305810006f60b42a55a"}]}}},
+    {"input_id":"deliver-end","at_ms":4,"node":"node-a","event":{"kind":"deliver","from":"node-b","msg":{"kind":"sync_end","sync_id":"node-a:0"}}}
+  ],
+  "verifier_fixtures": [
+    {"selector":{"kind":"input","input_id":"seed-op","op_ordinal":0},"reader":"node-b","outcome":{"kind":"valid","signer":"owner-sync"}},
+    {"selector":{"kind":"input","input_id":"deliver-ops","op_ordinal":0},"reader":"node-a","outcome":{"kind":"valid","signer":"owner-sync"}}
+  ],
+  "stop":{"kind":"at_ms","at_ms":5},
+  "expect":[
+    {"when":{"kind":"at_ms","at_ms":1},"kind":"effect","node":"node-a","effect":{"kind":"gossip","to":"node-b","msg":{"kind":"sync_start","sync_id":"node-a:0","heads":[]}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":1},"kind":"effect","node":"node-a","effect":{"kind":"schedule","token":{"kind":"sync_timeout","peer":"node-b","sync_id":"node-a:0","attempt":0},"at_mono":10001},"count":1},
+    {"when":{"kind":"at_ms","at_ms":2},"kind":"effect","node":"node-b","effect":{"kind":"gossip","to":"node-a","msg":{"kind":"sync_ops","sync_id":"node-a:0","ops":[{"canonical_hex":"ab016e776f726b73706163652d73796e6302696469726563746f7279034171046a6f776e65722d73796e63050006f60701088009010a5864a30101020203a601a301a3016e776f726b73706163652d73796e6302696469726563746f7279034171026a6f776e65722d73796e630300026a6f776e65722d73796e63036a6f776e65722d73796e63046e776f726b73706163652d73796e6305810006f60b42a55a"}]}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":2},"kind":"effect","node":"node-b","effect":{"kind":"gossip","to":"node-a","msg":{"kind":"sync_end","sync_id":"node-a:0"}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":5},"kind":"state","node":"node-a","assertion":{"kind":"retained","record_id":{"stream":{"share":"workspace-sync","glade_id":"directory","key_hex":"71"},"origin":"owner-sync","seq":0},"present":true}},
+    {"when":{"kind":"at_ms","at_ms":5},"kind":"state","node":"node-a","assertion":{"kind":"sync","peer":"node-b","sync_id":"node-a:0","status":"complete"}},
+    {"when":{"kind":"at_ms","at_ms":5},"kind":"converged","nodes":["node-a","node-b"]}
+  ]
+}

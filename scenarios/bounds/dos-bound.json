@@ -1,0 +1,139 @@
+{
+  "seed": 902,
+  "event_budget": 50,
+  "nodes": [
+    {
+      "id": "router",
+      "principal": "owner-a",
+      "owns": ["workspace-a"],
+      "seed_grants": [],
+      "clock": {"initial_wall_ms": 400000, "initial_mono_ms": 0, "changes": []},
+      "restarts": [],
+      "max_retained_bytes": 148
+    },
+    {
+      "id": "node-b",
+      "principal": "node-principal-b",
+      "owns": [],
+      "seed_grants": [],
+      "clock": {"initial_wall_ms": 400000, "initial_mono_ms": 0, "changes": []},
+      "restarts": [],
+      "max_retained_bytes": 148
+    }
+  ],
+  "links": [],
+  "inputs": [
+    {
+      "input_id": "fills-ceiling",
+      "at_ms": 0,
+      "node": "router",
+      "event": {
+        "kind": "deliver",
+        "from": "node-b",
+        "msg": {
+          "kind": "dir_op",
+          "op": {
+            "canonical_hex": "ab016b776f726b73706163652d6102696469726563746f72790341d204676f776e65722d61050006f60701088009010a585ea30101020203a601a301a3016b776f726b73706163652d6102696469726563746f72790341d202676f776e65722d61030002676f776e65722d6103706e6f64652d7072696e636970616c2d62046b776f726b73706163652d6105810006f60b42a55a"
+          }
+        }
+      }
+    },
+    {
+      "input_id": "over-ceiling",
+      "at_ms": 1,
+      "node": "router",
+      "event": {
+        "kind": "deliver",
+        "from": "node-b",
+        "msg": {
+          "kind": "dir_op",
+          "op": {
+            "canonical_hex": "ab016b776f726b73706163652d6102696469726563746f727903410104706e6f64652d7072696e636970616c2d62050006f60701088009010a5881a30101020003a601666e6f64652d62026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102706e6f64652d7072696e636970616c2d62030004a301a3016b776f726b73706163652d6102696469726563746f72790341d202676f776e65722d610300051a000b98c006000b42a55a"
+          }
+        }
+      }
+    },
+    {
+      "input_id": "route-after-exhaustion",
+      "at_ms": 2,
+      "node": "router",
+      "event": {
+        "kind": "route",
+        "ingress": "ingress-a",
+        "principal": "reader-a",
+        "authenticated_context_hex": "00",
+        "corr": "dos-bound",
+        "query": {"kind": "workspace", "share": "workspace-a"}
+      }
+    }
+  ],
+  "verifier_fixtures": [
+    {
+      "selector": {"kind": "input", "input_id": "fills-ceiling", "op_ordinal": 0},
+      "reader": "router",
+      "outcome": {"kind": "valid", "signer": "owner-a"}
+    },
+    {
+      "selector": {"kind": "input", "input_id": "over-ceiling", "op_ordinal": 0},
+      "reader": "router",
+      "outcome": {"kind": "valid", "signer": "node-principal-b"}
+    }
+  ],
+  "stop": {"kind": "at_ms", "at_ms": 5},
+  "expect": [
+    {
+      "when": {"kind": "at_ms", "at_ms": 2},
+      "kind": "route",
+      "node": "router",
+      "ingress": "ingress-a",
+      "corr": "dos-bound",
+      "ans": {"kind": "no_claim"}
+    },
+    {
+      "when": {"kind": "at_ms", "at_ms": 5},
+      "kind": "state",
+      "node": "router",
+      "assertion": {
+        "kind": "retained",
+        "record_id": {
+          "stream": {
+            "share": "workspace-a",
+            "glade_id": "directory",
+            "key_hex": "d2"
+          },
+          "origin": "owner-a",
+          "seq": 0
+        },
+        "present": true
+      }
+    },
+    {
+      "when": {"kind": "at_ms", "at_ms": 5},
+      "kind": "state",
+      "node": "router",
+      "assertion": {
+        "kind": "retained",
+        "record_id": {
+          "stream": {
+            "share": "workspace-a",
+            "glade_id": "directory",
+            "key_hex": "01"
+          },
+          "origin": "node-principal-b",
+          "seq": 0
+        },
+        "present": false
+      }
+    },
+    {
+      "when": {"kind": "at_ms", "at_ms": 5},
+      "kind": "state",
+      "node": "router",
+      "assertion": {
+        "kind": "storage",
+        "retained_bytes": 148,
+        "exhausted": true
+      }
+    }
+  ]
+}

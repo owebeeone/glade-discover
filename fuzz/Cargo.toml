@@ -1,0 +1,31 @@
+[package]
+name = "glade-discover-fuzz"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+glade-discover-protocol = { path = "../crates/glade-discover-protocol" }
+glade-discover-sim = { path = "../crates/glade-discover-sim" }
+libfuzzer-sys = "0.4"
+
+[[bin]]
+name = "protocol_decode"
+path = "fuzz_targets/protocol_decode.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "scenario_decode"
+path = "fuzz_targets/scenario_decode.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]
+members = ["."]
+resolver = "3"

@@ -1,0 +1,41 @@
+{
+  "seed": 302,
+  "event_budget": 350,
+  "nodes": [
+    {"id":"router","principal":"owner-a","owns":["workspace-a"],"seed_grants":[],"clock":{"initial_wall_ms":300000,"initial_mono_ms":0,"changes":[]},"restarts":[]},
+    {"id":"node-a","principal":"node-principal-a","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":300000,"initial_mono_ms":0,"changes":[]},"restarts":[]},
+    {"id":"node-b","principal":"node-principal-b","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":300000,"initial_mono_ms":0,"changes":[]},"restarts":[]}
+  ],
+  "links": [
+    {"a":"node-a","b":"router","latency_ms":1,"faults":[{"kind":"partition","start_ms":0,"end_ms":20}]},
+    {"a":"node-b","b":"router","latency_ms":1,"faults":[{"kind":"partition","start_ms":0,"end_ms":20}]}
+  ],
+  "inputs": [
+    {"input_id":"grant-a","at_ms":20,"node":"router","event":{"kind":"deliver","from":"node-a","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f72790341c104676f776e65722d61050006f60701088009010a585ea30101020203a601a301a3016b776f726b73706163652d6102696469726563746f72790341c102676f776e65722d61030002676f776e65722d6103706e6f64652d7072696e636970616c2d61046b776f726b73706163652d6105810006f60b42a55a"}}}},
+    {"input_id":"grant-b","at_ms":21,"node":"router","event":{"kind":"deliver","from":"node-b","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f72790341c204676f776e65722d61050006f60701088009010a585ea30101020203a601a301a3016b776f726b73706163652d6102696469726563746f72790341c202676f776e65722d61030002676f776e65722d6103706e6f64652d7072696e636970616c2d62046b776f726b73706163652d6105810006f60b42a55a"}}}},
+    {"input_id":"claim-a","at_ms":22,"node":"router","event":{"kind":"deliver","from":"node-a","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f727903410104706e6f64652d7072696e636970616c2d61050006f60701088009010a5881a30101020003a601666e6f64652d61026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102706e6f64652d7072696e636970616c2d61030004a301a3016b776f726b73706163652d6102696469726563746f72790341c102676f776e65722d610300051a000a122006070b42a55a"}}}},
+    {"input_id":"claim-b","at_ms":23,"node":"router","event":{"kind":"deliver","from":"node-b","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f727903410104706e6f64652d7072696e636970616c2d62050006f60701088009010a5881a30101020003a601666e6f64652d62026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102706e6f64652d7072696e636970616c2d62030004a301a3016b776f726b73706163652d6102696469726563746f72790341c202676f776e65722d610300051a000a122006070b42a55a"}}}},
+    {"input_id":"route-healed","at_ms":24,"node":"router","event":{"kind":"route","ingress":"ingress-a","principal":"reader-a","authenticated_context_hex":"21","corr":"post-heal","query":{"kind":"workspace","share":"workspace-a"}}},
+    {"input_id":"renew-a","at_ms":30,"node":"router","event":{"kind":"deliver","from":"node-a","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f727903410104706e6f64652d7072696e636970616c2d610501065820ab1e4220780b9bb7136ce247223f8fa96b98c1eb99b8f56f041eb9f787e147f60702088009010a5881a30101020003a601666e6f64652d61026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102706e6f64652d7072696e636970616c2d61030004a301a3016b776f726b73706163652d6102696469726563746f72790341c102676f776e65722d610300051a000a604006070b42a55a"}}}},
+    {"input_id":"route-after-a","at_ms":31,"node":"router","event":{"kind":"route","ingress":"ingress-a","principal":"reader-a","authenticated_context_hex":"21","corr":"after-renew-a","query":{"kind":"workspace","share":"workspace-a"}}},
+    {"input_id":"renew-b","at_ms":40,"node":"router","event":{"kind":"deliver","from":"node-b","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f727903410104706e6f64652d7072696e636970616c2d620501065820c904c0df739c088cfa57f9c40b470a41ce253508052b03bea36e0bf887da25440702088009010a5881a30101020003a601666e6f64652d62026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102706e6f64652d7072696e636970616c2d62030004a301a3016b776f726b73706163652d6102696469726563746f72790341c202676f776e65722d610300051a000a604006070b42a55a"}}}},
+    {"input_id":"route-after-b","at_ms":41,"node":"router","event":{"kind":"route","ingress":"ingress-a","principal":"reader-a","authenticated_context_hex":"21","corr":"after-renew-b","query":{"kind":"workspace","share":"workspace-a"}}}
+  ],
+  "verifier_fixtures": [
+    {"selector":{"kind":"input","input_id":"grant-a","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"owner-a"}},
+    {"selector":{"kind":"input","input_id":"grant-b","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"owner-a"}},
+    {"selector":{"kind":"input","input_id":"claim-a","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"node-principal-a"}},
+    {"selector":{"kind":"input","input_id":"claim-b","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"node-principal-b"}},
+    {"selector":{"kind":"input","input_id":"renew-a","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"node-principal-a"}},
+    {"selector":{"kind":"input","input_id":"renew-b","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"node-principal-b"}}
+  ],
+  "stop":{"kind":"at_ms","at_ms":45},
+  "expect":[
+    {"when":{"kind":"at_ms","at_ms":24},"kind":"route","node":"router","ingress":"ingress-a","corr":"post-heal","ans":{"kind":"matched","node":"node-b"}},
+    {"when":{"kind":"at_ms","at_ms":31},"kind":"route","node":"router","ingress":"ingress-a","corr":"after-renew-a","ans":{"kind":"matched","node":"node-b"}},
+    {"when":{"kind":"at_ms","at_ms":41},"kind":"route","node":"router","ingress":"ingress-a","corr":"after-renew-b","ans":{"kind":"matched","node":"node-b"}},
+    {"when":{"kind":"throughout","start_ms":24,"end_ms":45},"kind":"effect","node":"router","effect":{"kind":"teardown","slot":{"kind":"workspace","share":"workspace-a"},"generation":0},"count":0},
+    {"when":{"kind":"at_ms","at_ms":45},"kind":"state","node":"router","assertion":{"kind":"retained","record_id":{"stream":{"share":"workspace-a","glade_id":"directory","key_hex":"01"},"origin":"node-principal-a","seq":1},"present":true}},
+    {"when":{"kind":"at_ms","at_ms":45},"kind":"state","node":"router","assertion":{"kind":"retained","record_id":{"stream":{"share":"workspace-a","glade_id":"directory","key_hex":"01"},"origin":"node-principal-b","seq":1},"present":true}}
+  ]
+}

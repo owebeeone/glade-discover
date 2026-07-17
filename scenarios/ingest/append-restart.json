@@ -1,0 +1,27 @@
+{
+  "seed": 602,
+  "event_budget": 300,
+  "nodes": [
+    {"id":"node-a","principal":"owner-a","owns":["workspace-a"],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[{"at_ms":5,"watermark":{"kind":"preserve"}}]},
+    {"id":"node-b","principal":"peer-b","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[]}
+  ],
+  "links": [],
+  "inputs": [
+    {"input_id":"serve-grant","at_ms":0,"node":"node-a","event":{"kind":"deliver","from":"node-a","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f72790341a204676f776e65722d61050006f60701088009010a5855a30101020203a601a301a3016b776f726b73706163652d6102696469726563746f72790341a202676f776e65722d61030002676f776e65722d6103676f776e65722d61046b776f726b73706163652d6105810006f60b42a55a"}}}},
+    {"input_id":"advertise","at_ms":1,"node":"node-a","event":{"kind":"advertise","command":{"intent":"publish-restart","slot":{"kind":"workspace","share":"workspace-a"},"generation":1,"mode":{"kind":"initial"},"draft":{"kind":"workspace","node":"node-a","share":"workspace-a","identity":{"kind":"mint"},"grant_ref":{"stream":{"share":"workspace-a","glade_id":"directory","key_hex":"a2"},"origin":"owner-a","seq":0},"lease_expiry_ms":500000,"epoch":0}}}},
+    {"input_id":"accepted","at_ms":10,"node":"node-a","event":{"kind":"op_accepted","intent":"publish-restart","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f727903410104676f776e65722d61050006f60701088009010a5878a30101020003a601666e6f64652d61026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102676f776e65722d61030004a301a3016b776f726b73706163652d6102696469726563746f72790341a202676f776e65722d610300051a0007a12006000b42a55a"}}}
+  ],
+  "verifier_fixtures": [
+    {"selector":{"kind":"input","input_id":"serve-grant","op_ordinal":0},"reader":"node-a","outcome":{"kind":"valid","signer":"owner-a"}},
+    {"selector":{"kind":"minted","node":"node-a","slot":{"kind":"workspace","share":"workspace-a"},"generation":1,"append_ordinal":0},"reader":"node-a","outcome":{"kind":"valid","signer":"owner-a"}}
+  ],
+  "stop":{"kind":"at_ms","at_ms":15},
+  "expect":[
+    {"when":{"kind":"at_ms","at_ms":1},"kind":"effect","node":"node-a","effect":{"kind":"append","intent":"publish-restart","slot":{"kind":"workspace","share":"workspace-a"},"generation":1,"draft":{"kind":"workspace","node":"node-a","share":"workspace-a","identity":{"kind":"mint"},"grant_ref":{"stream":{"share":"workspace-a","glade_id":"directory","key_hex":"a2"},"origin":"owner-a","seq":0},"lease_expiry_ms":500000,"epoch":0}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":5},"kind":"effect","node":"node-a","effect":{"kind":"append","intent":"publish-restart","slot":{"kind":"workspace","share":"workspace-a"},"generation":1,"draft":{"kind":"workspace","node":"node-a","share":"workspace-a","identity":{"kind":"mint"},"grant_ref":{"stream":{"share":"workspace-a","glade_id":"directory","key_hex":"a2"},"origin":"owner-a","seq":0},"lease_expiry_ms":500000,"epoch":0}},"count":1},
+    {"when":{"kind":"throughout","start_ms":1,"end_ms":10},"kind":"effect","node":"node-a","effect":{"kind":"gossip","to":"node-b","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f727903410104676f776e65722d61050006f60701088009010a5878a30101020003a601666e6f64652d61026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102676f776e65722d61030004a301a3016b776f726b73706163652d6102696469726563746f72790341a202676f776e65722d610300051a0007a12006000b42a55a"}}},"count":0},
+    {"when":{"kind":"at_ms","at_ms":10},"kind":"effect","node":"node-a","effect":{"kind":"gossip","to":"node-b","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f727903410104676f776e65722d61050006f60701088009010a5878a30101020003a601666e6f64652d61026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102676f776e65722d61030004a301a3016b776f726b73706163652d6102696469726563746f72790341a202676f776e65722d610300051a0007a12006000b42a55a"}}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":15},"kind":"state","node":"node-a","assertion":{"kind":"mine","slot":{"kind":"workspace","share":"workspace-a"},"generation":1,"status":"accepted"}},
+    {"when":{"kind":"at_ms","at_ms":15},"kind":"state","node":"node-a","assertion":{"kind":"retained","record_id":{"stream":{"share":"workspace-a","glade_id":"directory","key_hex":"01"},"origin":"owner-a","seq":0},"present":true}}
+  ]
+}

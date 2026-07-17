@@ -1,0 +1,63 @@
+{
+  "seed": 9901,
+  "event_budget": 20,
+  "nodes": [
+    {
+      "id": "router",
+      "principal": "owner-a",
+      "owns": [],
+      "seed_grants": [],
+      "clock": {
+        "initial_wall_ms": 900000,
+        "initial_mono_ms": 0,
+        "changes": []
+      },
+      "restarts": []
+    }
+  ],
+  "links": [],
+  "inputs": [
+    {
+      "input_id": "duplicate-a",
+      "at_ms": 1,
+      "node": "router",
+      "event": {
+        "kind": "route",
+        "ingress": "ingress-a",
+        "principal": "reader-a",
+        "authenticated_context_hex": "00",
+        "corr": "duplicate-corr",
+        "query": {"kind": "workspace", "share": "workspace-missing"}
+      }
+    },
+    {
+      "input_id": "duplicate-b",
+      "at_ms": 1,
+      "node": "router",
+      "event": {
+        "kind": "route",
+        "ingress": "ingress-a",
+        "principal": "reader-a",
+        "authenticated_context_hex": "00",
+        "corr": "duplicate-corr",
+        "query": {"kind": "workspace", "share": "workspace-missing"}
+      }
+    }
+  ],
+  "verifier_fixtures": [],
+  "stop": {"kind": "at_ms", "at_ms": 3},
+  "expect": [
+    {
+      "when": {"kind": "at_ms", "at_ms": 1},
+      "kind": "effect",
+      "node": "router",
+      "effect": {
+        "kind": "reply",
+        "ingress": "ingress-a",
+        "corr": "duplicate-corr",
+        "ans": {"kind": "no_claim"}
+      },
+      "count": 2
+    }
+  ]
+}

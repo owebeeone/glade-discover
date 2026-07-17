@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.85.0
+          components: clippy, rustfmt
+      - name: Verify pinned design and trace
+        run: |
+          ./scripts/check-design-snapshot.sh
+          ./scripts/check-requirement-trace.sh
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      - name: Lint
+        run: cargo clippy --locked --workspace --all-targets -- -D warnings
+      - name: Test workspace
+        run: cargo test --locked --workspace
+      - name: Test stable targets
+        run: |
+          cargo test --locked -p glade-discover-protocol --test corpus
+          cargo test --locked -p glade-discover-sim --test all_scenarios
+          cargo test --locked -p glade-discover-sim --test deterministic_replay
+      - name: Install nightly for fuzz target compilation
+        uses: dtolnay/rust-toolchain@nightly-2026-02-28
+      - name: Compile nested fuzz workspace
+        run: cargo +nightly-2026-02-28 check --locked --manifest-path fuzz/Cargo.toml --bins

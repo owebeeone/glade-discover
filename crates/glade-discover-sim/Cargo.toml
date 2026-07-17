@@ -1,0 +1,17 @@
+[package]
+name = "glade-discover-sim"
+description = "Deterministic adversarial simulator for Glade discovery"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+glade-discover-core = { path = "../glade-discover-core" }
+glade-discover-protocol = { path = "../glade-discover-protocol" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[lints]
+workspace = true

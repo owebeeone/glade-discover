@@ -1,0 +1,14 @@
+# Rust build output (root crate and nested workspace crates)
+/target/
+**/target/
+
+# Local scratch space
+/scratch/
+**/scratch/
+
+# cargo-fuzz generated state (targets remain tracked)
+/fuzz/artifacts/
+/fuzz/corpus/
+
+# macOS metadata
+.DS_Store

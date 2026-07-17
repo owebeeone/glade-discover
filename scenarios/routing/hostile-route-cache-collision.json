@@ -1,0 +1,136 @@
+{
+  "seed": 9902,
+  "event_budget": 50,
+  "nodes": [
+    {
+      "id": "router",
+      "principal": "owner-a",
+      "owns": ["workspace-a"],
+      "seed_grants": [],
+      "clock": {"initial_wall_ms": 400000, "initial_mono_ms": 0, "changes": []},
+      "restarts": []
+    },
+    {
+      "id": "node-b",
+      "principal": "node-principal-b",
+      "owns": [],
+      "seed_grants": [],
+      "clock": {"initial_wall_ms": 400000, "initial_mono_ms": 0, "changes": []},
+      "restarts": []
+    }
+  ],
+  "links": [],
+  "inputs": [
+    {
+      "input_id": "grant",
+      "at_ms": 0,
+      "node": "router",
+      "event": {
+        "kind": "deliver",
+        "from": "node-b",
+        "msg": {
+          "kind": "dir_op",
+          "op": {
+            "canonical_hex": "ab016b776f726b73706163652d6102696469726563746f72790341d104676f776e65722d61050006f60701088009010a585ea30101020203a601a301a3016b776f726b73706163652d6102696469726563746f72790341d102676f776e65722d61030002676f776e65722d6103706e6f64652d7072696e636970616c2d62046b776f726b73706163652d6105810006f60b42a55a"
+          }
+        }
+      }
+    },
+    {
+      "input_id": "claim",
+      "at_ms": 1,
+      "node": "router",
+      "event": {
+        "kind": "deliver",
+        "from": "node-b",
+        "msg": {
+          "kind": "dir_op",
+          "op": {
+            "canonical_hex": "ab016b776f726b73706163652d6102696469726563746f727903410104706e6f64652d7072696e636970616c2d62050006f60701088009010a5881a30101020003a601666e6f64652d62026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102706e6f64652d7072696e636970616c2d62030004a301a3016b776f726b73706163652d6102696469726563746f72790341d102676f776e65722d610300051a000b98c006000b42a55a"
+          }
+        }
+      }
+    },
+    {
+      "input_id": "matched-first",
+      "at_ms": 2,
+      "node": "router",
+      "event": {
+        "kind": "route",
+        "ingress": "ingress-a",
+        "principal": "reader-a",
+        "authenticated_context_hex": "00",
+        "corr": "shared-corr",
+        "query": {"kind": "workspace", "share": "workspace-a"}
+      }
+    },
+    {
+      "input_id": "miss-second",
+      "at_ms": 2,
+      "node": "router",
+      "event": {
+        "kind": "route",
+        "ingress": "ingress-a",
+        "principal": "reader-a",
+        "authenticated_context_hex": "00",
+        "corr": "shared-corr",
+        "query": {"kind": "workspace", "share": "workspace-missing"}
+      }
+    }
+  ],
+  "verifier_fixtures": [
+    {
+      "selector": {"kind": "input", "input_id": "grant", "op_ordinal": 0},
+      "reader": "router",
+      "outcome": {"kind": "valid", "signer": "owner-a"}
+    },
+    {
+      "selector": {"kind": "input", "input_id": "claim", "op_ordinal": 0},
+      "reader": "router",
+      "outcome": {"kind": "valid", "signer": "node-principal-b"}
+    }
+  ],
+  "stop": {"kind": "at_ms", "at_ms": 5},
+  "expect": [
+    {
+      "when": {"kind": "at_ms", "at_ms": 2},
+      "kind": "route",
+      "node": "router",
+      "ingress": "ingress-a",
+      "corr": "shared-corr",
+      "ans": {"kind": "matched", "node": "node-b"}
+    },
+    {
+      "when": {"kind": "at_ms", "at_ms": 2},
+      "kind": "route",
+      "node": "router",
+      "ingress": "ingress-a",
+      "corr": "shared-corr",
+      "ans": {"kind": "no_claim"}
+    },
+    {
+      "when": {"kind": "at_ms", "at_ms": 2},
+      "kind": "effect",
+      "node": "router",
+      "effect": {
+        "kind": "reply",
+        "ingress": "ingress-a",
+        "corr": "shared-corr",
+        "ans": {"kind": "matched", "node": "node-b"}
+      },
+      "count": 1
+    },
+    {
+      "when": {"kind": "at_ms", "at_ms": 2},
+      "kind": "effect",
+      "node": "router",
+      "effect": {
+        "kind": "reply",
+        "ingress": "ingress-a",
+        "corr": "shared-corr",
+        "ans": {"kind": "no_claim"}
+      },
+      "count": 1
+    }
+  ]
+}

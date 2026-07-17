@@ -1,0 +1,30 @@
+{
+  "seed": 202,
+  "event_budget": 300,
+  "nodes": [
+    {"id":"router","principal":"owner-a","owns":["workspace-a"],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[{"at_ms":10,"watermark":{"kind":"unreadable"}}]},
+    {"id":"node-b","principal":"node-principal-b","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":100000,"initial_mono_ms":0,"changes":[]},"restarts":[]}
+  ],
+  "links": [],
+  "inputs": [
+    {"input_id":"grant","at_ms":0,"node":"router","event":{"kind":"deliver","from":"node-b","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f72790341b204676f776e65722d61050006f60701088009010a585ea30101020203a601a301a3016b776f726b73706163652d6102696469726563746f72790341b202676f776e65722d61030002676f776e65722d6103706e6f64652d7072696e636970616c2d62046b776f726b73706163652d6105810006f60b42a55a"}}}},
+    {"input_id":"claim","at_ms":1,"node":"router","event":{"kind":"deliver","from":"node-b","msg":{"kind":"dir_op","op":{"canonical_hex":"ab016b776f726b73706163652d6102696469726563746f727903410104706e6f64652d7072696e636970616c2d62050006f60701088009010a5881a30101020003a601666e6f64652d62026b776f726b73706163652d6103a301a3016b776f726b73706163652d6102696469726563746f727903410102706e6f64652d7072696e636970616c2d62030004a301a3016b776f726b73706163652d6102696469726563746f72790341b202676f776e65722d610300051a0002710006000b42a55a"}}}},
+    {"input_id":"route-before","at_ms":5,"node":"router","event":{"kind":"route","ingress":"ingress-a","principal":"reader-a","authenticated_context_hex":"11","corr":"before-restart","query":{"kind":"workspace","share":"workspace-a"}}},
+    {"input_id":"route-uncertain","at_ms":11,"node":"router","event":{"kind":"route","ingress":"ingress-a","principal":"reader-a","authenticated_context_hex":"11","corr":"uncertain","query":{"kind":"workspace","share":"workspace-a"}}},
+    {"input_id":"reseed","at_ms":20,"node":"router","event":{"kind":"clock_reseed","watermark":100020}},
+    {"input_id":"route-recovered","at_ms":21,"node":"router","event":{"kind":"route","ingress":"ingress-a","principal":"reader-a","authenticated_context_hex":"11","corr":"recovered","query":{"kind":"workspace","share":"workspace-a"}}}
+  ],
+  "verifier_fixtures": [
+    {"selector":{"kind":"input","input_id":"grant","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"owner-a"}},
+    {"selector":{"kind":"input","input_id":"claim","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"node-principal-b"}}
+  ],
+  "stop":{"kind":"at_ms","at_ms":25},
+  "expect":[
+    {"when":{"kind":"at_ms","at_ms":5},"kind":"route","node":"router","ingress":"ingress-a","corr":"before-restart","ans":{"kind":"matched","node":"node-b"}},
+    {"when":{"kind":"at_ms","at_ms":11},"kind":"route","node":"router","ingress":"ingress-a","corr":"uncertain","ans":{"kind":"no_claim"}},
+    {"when":{"kind":"at_ms","at_ms":11},"kind":"state","node":"router","assertion":{"kind":"clock","value":{"kind":"uncertain","floor":null}}},
+    {"when":{"kind":"at_ms","at_ms":21},"kind":"route","node":"router","ingress":"ingress-a","corr":"recovered","ans":{"kind":"matched","node":"node-b"}},
+    {"when":{"kind":"at_ms","at_ms":21},"kind":"effect","node":"router","effect":{"kind":"reply","ingress":"ingress-a","corr":"recovered","ans":{"kind":"matched","node":"node-b"}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":25},"kind":"state","node":"router","assertion":{"kind":"clock","value":{"kind":"ready","watermark":100021}}}
+  ]
+}

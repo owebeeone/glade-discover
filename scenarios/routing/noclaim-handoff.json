@@ -1,0 +1,122 @@
+{
+  "seed": 901,
+  "event_budget": 50,
+  "nodes": [
+    {
+      "id": "router",
+      "principal": "owner-a",
+      "owns": ["workspace-a"],
+      "seed_grants": [],
+      "clock": {
+        "initial_wall_ms": 900000,
+        "initial_mono_ms": 0,
+        "changes": []
+      },
+      "restarts": []
+    }
+  ],
+  "links": [],
+  "inputs": [
+    {
+      "input_id": "authorized-looking-reader",
+      "at_ms": 1,
+      "node": "router",
+      "event": {
+        "kind": "route",
+        "ingress": "ingress-authorized",
+        "principal": "reader-authorized",
+        "authenticated_context_hex": "a1",
+        "corr": "noclaim-authorized",
+        "query": {
+          "kind": "binding",
+          "share": "svc",
+          "glade_id": "glade-a",
+          "key_hex": "01"
+        }
+      }
+    },
+    {
+      "input_id": "unauthorized-looking-reader",
+      "at_ms": 2,
+      "node": "router",
+      "event": {
+        "kind": "route",
+        "ingress": "ingress-unauthorized",
+        "principal": "reader-unauthorized",
+        "authenticated_context_hex": "ff",
+        "corr": "noclaim-unauthorized",
+        "query": {
+          "kind": "binding",
+          "share": "svc",
+          "glade_id": "glade-a",
+          "key_hex": "01"
+        }
+      }
+    }
+  ],
+  "verifier_fixtures": [],
+  "stop": {
+    "kind": "at_ms",
+    "at_ms": 5
+  },
+  "expect": [
+    {
+      "when": {"kind": "at_ms", "at_ms": 1},
+      "kind": "route",
+      "node": "router",
+      "ingress": "ingress-authorized",
+      "corr": "noclaim-authorized",
+      "ans": {"kind": "no_claim"}
+    },
+    {
+      "when": {"kind": "at_ms", "at_ms": 1},
+      "kind": "effect",
+      "node": "router",
+      "effect": {
+        "kind": "reply",
+        "ingress": "ingress-authorized",
+        "corr": "noclaim-authorized",
+        "ans": {"kind": "no_claim"}
+      },
+      "count": 1
+    },
+    {
+      "when": {"kind": "at_ms", "at_ms": 2},
+      "kind": "route",
+      "node": "router",
+      "ingress": "ingress-unauthorized",
+      "corr": "noclaim-unauthorized",
+      "ans": {"kind": "no_claim"}
+    },
+    {
+      "when": {"kind": "at_ms", "at_ms": 2},
+      "kind": "effect",
+      "node": "router",
+      "effect": {
+        "kind": "reply",
+        "ingress": "ingress-unauthorized",
+        "corr": "noclaim-unauthorized",
+        "ans": {"kind": "no_claim"}
+      },
+      "count": 1
+    },
+    {
+      "when": {"kind": "at_ms", "at_ms": 5},
+      "kind": "state",
+      "node": "router",
+      "assertion": {
+        "kind": "retained",
+        "record_id": {
+          "stream": {
+            "share": "svc",
+            "glade_id": "glade-a",
+            "key_hex": "01"
+          },
+          "origin": "derived-worker",
+          "seq": 0
+        },
+        "present": false
+      }
+    }
+  ]
+}

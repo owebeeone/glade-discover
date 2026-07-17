@@ -1,0 +1,57 @@
+{
+  "seed": 1,
+  "event_budget": 100,
+  "nodes": [
+    {
+      "id": "node-a",
+      "principal": "principal-a",
+      "owns": [],
+      "seed_grants": [],
+      "clock": {
+        "initial_wall_ms": 1000,
+        "initial_mono_ms": 0,
+        "changes": []
+      },
+      "restarts": []
+    }
+  ],
+  "links": [],
+  "inputs": [
+    {
+      "input_id": "route-1",
+      "at_ms": 0,
+      "node": "node-a",
+      "event": {
+        "kind": "route",
+        "ingress": "ingress-a",
+        "principal": "reader-a",
+        "authenticated_context_hex": "",
+        "corr": "corr-a",
+        "query": {
+          "kind": "workspace",
+          "share": "workspace-a"
+        }
+      }
+    }
+  ],
+  "verifier_fixtures": [],
+  "stop": {
+    "kind": "at_ms",
+    "at_ms": 10
+  },
+  "expect": [
+    {
+      "when": {
+        "kind": "at_ms",
+        "at_ms": 0
+      },
+      "kind": "route",
+      "node": "node-a",
+      "ingress": "ingress-a",
+      "corr": "corr-a",
+      "ans": {
+        "kind": "no_claim"
+      }
+    }
+  ]
+}

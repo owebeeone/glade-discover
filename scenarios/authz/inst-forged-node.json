@@ -1,0 +1,26 @@
+{
+  "seed": 103,
+  "event_budget": 200,
+  "nodes": [
+    {"id":"router","principal":"router-principal","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":200000,"initial_mono_ms":0,"changes":[]},"restarts":[]},
+    {"id":"execution-authority","principal":"execution-authority","owns":["svc"],"seed_grants":[],"clock":{"initial_wall_ms":200000,"initial_mono_ms":0,"changes":[]},"restarts":[]},
+    {"id":"worker-a","principal":"derived-worker-a","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":200000,"initial_mono_ms":0,"changes":[]},"restarts":[]},
+    {"id":"worker-b","principal":"derived-worker-b","owns":[],"seed_grants":[],"clock":{"initial_wall_ms":200000,"initial_mono_ms":0,"changes":[]},"restarts":[]}
+  ],
+  "links": [],
+  "inputs": [
+    {"input_id":"exec-grant","at_ms":0,"node":"router","event":{"kind":"deliver","from":"worker-a","msg":{"kind":"dir_op","op":{"canonical_hex":"ab01637376630267676c6164652d610341e20473657865637574696f6e2d617574686f72697479050006f60701088009010a588ea30101020203a601a301a301637376630267676c6164652d610341e20273657865637574696f6e2d617574686f7269747903000273657865637574696f6e2d617574686f726974790370646572697665642d776f726b65722d61046373766305810106a3010002a301a301637376630267676c6164652d610341d0026c646566696e6974696f6e2d6103000341c00b42a55a"}}}},
+    {"input_id":"forged-claim","at_ms":1,"node":"router","event":{"kind":"deliver","from":"worker-a","msg":{"kind":"dir_op","op":{"canonical_hex":"ab01637376630267676c6164652d610341aa0470646572697665642d776f726b65722d61050006f60701088009010a58a7a30101020103aa0168776f726b65722d6202637376630367676c6164652d610441aa05a301a301637376630267676c6164652d610341aa0270646572697665642d776f726b65722d61030006a301a301637376630267676c6164652d610341d0026c646566696e6974696f6e2d61030007a301a301637376630267676c6164652d610341e20273657865637574696f6e2d617574686f7269747903000841c0091a0003f7a00a000b42a55a"}}}},
+    {"input_id":"route","at_ms":2,"node":"router","event":{"kind":"route","ingress":"ingress-a","principal":"reader-a","authenticated_context_hex":"02","corr":"forged-node","query":{"kind":"binding","share":"svc","glade_id":"glade-a","key_hex":"aa"}}}
+  ],
+  "verifier_fixtures": [
+    {"selector":{"kind":"input","input_id":"exec-grant","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"execution-authority"}},
+    {"selector":{"kind":"input","input_id":"forged-claim","op_ordinal":0},"reader":"router","outcome":{"kind":"valid","signer":"derived-worker-a"}}
+  ],
+  "stop":{"kind":"at_ms","at_ms":5},
+  "expect":[
+    {"when":{"kind":"at_ms","at_ms":2},"kind":"route","node":"router","ingress":"ingress-a","corr":"forged-node","ans":{"kind":"no_claim"}},
+    {"when":{"kind":"at_ms","at_ms":2},"kind":"effect","node":"router","effect":{"kind":"reply","ingress":"ingress-a","corr":"forged-node","ans":{"kind":"no_claim"}},"count":1},
+    {"when":{"kind":"at_ms","at_ms":5},"kind":"state","node":"router","assertion":{"kind":"retained","record_id":{"stream":{"share":"svc","glade_id":"glade-a","key_hex":"aa"},"origin":"derived-worker-a","seq":0},"present":false}}
+  ]
+}
