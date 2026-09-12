@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "packages": {
+    "glade-discover-acceptance-api": {
+      "role": "contract",
+      "dependencies": ["normal:glade-discover-protocol"],
+      "traits": { "AcceptanceJournal": ["scope", "recover", "lookup", "commit", "acknowledge"] },
+      "conformance_tests": ["public_contract"]
+    },
+    "glade-discover-registry-api": {
+      "role": "contract",
+      "dependencies": ["normal:glade-discover-protocol", "normal:glade-discover-acceptance-api"],
+      "traits": { "RegistryWriter": ["publish", "renew"], "RegistryReader": ["resolve"] },
+      "conformance_tests": ["public_contract"]
+    },
+    "glade-discover-trust-api": {
+      "role": "contract",
+      "dependencies": ["normal:glade-discover-protocol"],
+      "traits": { "TrustPolicy": ["evaluate"] },
+      "conformance_tests": ["public_contract"]
+    },
+    "glade-discover-placement-api": {
+      "role": "contract",
+      "dependencies": ["normal:glade-discover-protocol"],
+      "traits": { "ShardLocator": ["locate"] },
+      "conformance_tests": ["public_contract"]
+    },
+    "glade-discover-transport-api": {
+      "role": "contract",
+      "dependencies": ["normal:glade-discover-protocol"],
+      "traits": { "Transport": ["send"] },
+      "conformance_tests": ["public_contract"]
+    },
+    "glade-discover-signature-api": {
+      "role": "contract",
+      "dependencies": ["normal:glade-discover-protocol"],
+      "traits": { "Signer": ["principal", "sign"], "Verifier": ["verify"] },
+      "conformance_tests": ["public_contract"]
+    },
+    "glade-discover-operation-store-api": {
+      "role": "contract",
+      "dependencies": ["normal:glade-discover-protocol"],
+      "traits": { "DurableOperationStore": ["load", "persist"] },
+      "conformance_tests": ["public_contract"]
+    },
+    "glade-discover-protocol": {
+      "role": "protocol",
+      "reason": "Canonical records/codec, not a replaceable service. Owner: discovery maintainer. Preserve v3.1 compatibility; re-review if runtime behavior or I/O is introduced.",
+      "dependencies": ["normal:sha2"],
+      "conformance_tests": ["corpus", "public_contract"]
+    },
+    "glade-discover-core": {
+      "role": "pure",
+      "reason": "The frozen step(state, ctx, event) -> (state, effects) contract is the substitution boundary; a marker trait adds no isolation. Owner: discovery maintainer. Re-review on any host/I/O or concrete-service dependency.",
+      "dependencies": ["normal:glade-discover-protocol"],
+      "conformance_tests": ["public_contract", "subsystem_contract"]
+    },
+    "glade-discover-node-adapter": {
+      "role": "integration",
+      "reason": "Existing consumer-owned host traits share a crate with orchestration. Owner: discovery maintainer. Retire this transitional placement when port extraction is approved with compatibility and test evidence; it is not permission for new implementation libraries to omit a contract.",
+      "dependencies": ["normal:glade-discover-core", "normal:glade-discover-protocol"],
+      "traits": {
+        "append::AppendHost": ["accepted", "allocate", "signer", "sign", "verify", "persist_accepted"],
+        "clock::ClockHost": ["load_watermark", "persist_watermark"],
+        "driver::DurableCommit": ["authenticate", "commit", "acknowledge"],
+        "driver::EffectExecutor": ["execute"],
+        "ingress::ConsumerPolicy": ["authorize"],
+        "ingress::DiscoveryRouter": ["resolve"],
+        "ingress::ServiceManager": ["match_candidate", "place"],
+        "transport::Transport": ["send"]
+      },
+      "conformance_tests": ["p6_append", "p6_clock", "p6_driver", "p6_ingress", "p6_transport", "p6_vertical_integration"]
+    },
+    "glade-discover-sim": {
+      "role": "harness",
+      "reason": "Deterministic simulation is not a production service. Owner: discovery maintainer. Never import it into core/contract/protocol; keep exhaustive scenarios outside the local package fast loop.",
+      "dependencies": ["normal:glade-discover-core", "normal:glade-discover-protocol", "normal:serde", "normal:serde_json"],
+      "conformance_tests": ["all_scenarios", "schema_contract"]
+    }
+  }
+}
