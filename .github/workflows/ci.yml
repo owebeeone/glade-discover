@@ -8,7 +8,41 @@ permissions:
   contents: read
 
 jobs:
+  architecture:
+    name: Architecture boundaries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.85.0
+          components: clippy, rustfmt
+      - name: Check architecture tool formatting
+        run: cargo fmt --manifest-path tools/architecture-check/Cargo.toml -- --check
+      - name: Lint architecture tool
+        run: cargo clippy --locked --manifest-path tools/architecture-check/Cargo.toml --all-targets -- -D warnings
+      - name: Test architecture guard, including rejection cases
+        run: cargo test --locked --manifest-path tools/architecture-check/Cargo.toml
+      - name: Enforce package boundaries
+        run: ./scripts/check-architecture.sh
+
+  contract-interfaces:
+    name: Draft interfaces and canonical tests
+    needs: architecture
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.85.0
+          components: clippy
+      - name: Run opt-in conformance suites (default workspace tests do not enable them)
+        run: sh scripts/check-contracts.sh
+      - name: Lint opt-in conformance code
+        run: cargo clippy --locked -p glade-discover-transport-api -p glade-discover-signature-api -p glade-discover-operation-store-api -p glade-discover-acceptance-api -p glade-discover-registry-api -p glade-discover-trust-api -p glade-discover-placement-api --all-targets --all-features -- -D warnings
+
   verify:
+    needs: [architecture, contract-interfaces]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

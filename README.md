@@ -18,6 +18,39 @@ through injected host traits and commits durable state before effects.
 
 ## Development
 
+New opt-in, runtime-independent host traits and reusable tests are described in
+[Draft host contracts](dev-docs/DraftHostContracts.md). They do not replace the
+existing adapter or demo. The follow-up [registry contract draft](dev-docs/RegistryContractDraft.md)
+adds acceptance, registry, trust and placement boundaries. Run
+`sh scripts/check-contracts.sh` for all seven draft contract crates, or pass
+`transport`, `signature`, `store`, `acceptance`, `registry`, `trust`, or `placement`
+for one package. Also test affected consumers when changing a contract (for
+example, run `registry` after changing `acceptance`).
+The script enables the otherwise opt-in conformance tests explicitly.
+
+Run the fast architecture gate when changing a public boundary, library, or
+dependency:
+
+```sh
+./scripts/check-architecture.sh
+```
+
+The gate rejects unclassified workspace libraries, unexpected dependency edges,
+missing named trait contracts/implementations, and missing conformance targets.
+It is a separate tool workspace: normal core/package tests do not compile it.
+See [Library boundary checks](dev-docs/LibraryBoundaryChecks.md) for coverage,
+exceptions, fast-test selection, and the shared policy reference.
+
+For the ordinary edit loop, select the affected package/test, for example:
+
+```sh
+cargo test --locked -p glade-discover-core --test public_contract
+cargo test --locked -p glade-discover-node-adapter --test p6_transport
+```
+
+These narrow examples are not a substitute for affected-consumer tests after a
+contract change. The workspace commands below remain the full verification gate.
+
 Run the P0 provenance and trace checks:
 
 ```sh

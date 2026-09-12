@@ -57,6 +57,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "glade-discover-acceptance-api"
+version = "0.0.0"
+dependencies = [
+ "glade-discover-protocol",
+]
+
+[[package]]
 name = "glade-discover-core"
 version = "0.0.0"
 dependencies = [
@@ -72,10 +79,39 @@ dependencies = [
 ]
 
 [[package]]
+name = "glade-discover-operation-store-api"
+version = "0.0.0"
+dependencies = [
+ "glade-discover-protocol",
+]
+
+[[package]]
+name = "glade-discover-placement-api"
+version = "0.0.0"
+dependencies = [
+ "glade-discover-protocol",
+]
+
+[[package]]
 name = "glade-discover-protocol"
 version = "0.0.0"
 dependencies = [
  "sha2",
+]
+
+[[package]]
+name = "glade-discover-registry-api"
+version = "0.0.0"
+dependencies = [
+ "glade-discover-acceptance-api",
+ "glade-discover-protocol",
+]
+
+[[package]]
+name = "glade-discover-signature-api"
+version = "0.0.0"
+dependencies = [
+ "glade-discover-protocol",
 ]
 
 [[package]]
@@ -86,6 +122,20 @@ dependencies = [
  "glade-discover-protocol",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "glade-discover-transport-api"
+version = "0.0.0"
+dependencies = [
+ "glade-discover-protocol",
+]
+
+[[package]]
+name = "glade-discover-trust-api"
+version = "0.0.0"
+dependencies = [
+ "glade-discover-protocol",
 ]
 
 [[package]]

@@ -4,6 +4,13 @@ members = [
     "crates/glade-discover-node-adapter",
     "crates/glade-discover-protocol",
     "crates/glade-discover-sim",
+    "crates/glade-discover-transport-api",
+    "crates/glade-discover-signature-api",
+    "crates/glade-discover-operation-store-api",
+    "crates/glade-discover-acceptance-api",
+    "crates/glade-discover-registry-api",
+    "crates/glade-discover-trust-api",
+    "crates/glade-discover-placement-api",
 ]
 resolver = "3"
 
@@ -19,4 +26,3 @@ unsafe_code = "forbid"
 
 [workspace.lints.clippy]
 all = "warn"
-

@@ -1,0 +1,21 @@
+[package]
+name = "glade-discover-acceptance-api"
+description = "Draft acceptance contract; no runtime implementation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+glade-discover-protocol = { path = "../glade-discover-protocol" }
+
+[features]
+conformance = []
+
+[[test]]
+name = "public_contract"
+required-features = ["conformance"]
+
+[lints]
+workspace = true
