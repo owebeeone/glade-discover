@@ -484,18 +484,10 @@ pub enum VerificationOutcome {
     BadSignature,
 }
 
-#[cfg_attr(
-    not(test),
-    allow(dead_code, reason = "P4 runner consumes the P2 verifier table")
-)]
 pub(crate) struct VerifierTable {
     entries: BTreeMap<(OpSelector, Option<String>), VerificationOutcome>,
 }
 
-#[cfg_attr(
-    not(test),
-    allow(dead_code, reason = "P4 runner consumes the P2 verifier table")
-)]
 impl VerifierTable {
     pub(crate) fn from_fixtures(fixtures: &[VerifierFixture]) -> Self {
         let entries = fixtures
@@ -527,10 +519,6 @@ impl VerifierTable {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(
-    not(test),
-    allow(dead_code, reason = "P4 runner consumes minted selector errors")
-)]
 pub(crate) enum SelectorError {
     IntentMismatch,
     UnknownIntent,
@@ -539,10 +527,6 @@ pub(crate) enum SelectorError {
     OrdinalExhausted,
 }
 
-#[cfg_attr(
-    not(test),
-    allow(dead_code, reason = "P4 runner consumes the P2 selector registry")
-)]
 pub(crate) struct MintedSelectorRegistry<P> {
     next_ordinals: BTreeMap<(String, SlotSpec, u64), u32>,
     intents: BTreeMap<String, (OpSelector, P)>,
@@ -550,10 +534,6 @@ pub(crate) struct MintedSelectorRegistry<P> {
     bindings: BTreeMap<Vec<u8>, OpSelector>,
 }
 
-#[cfg_attr(
-    not(test),
-    allow(dead_code, reason = "P4 runner consumes the P2 selector registry")
-)]
 impl<P> Default for MintedSelectorRegistry<P> {
     fn default() -> Self {
         Self {
@@ -565,10 +545,6 @@ impl<P> Default for MintedSelectorRegistry<P> {
     }
 }
 
-#[cfg_attr(
-    not(test),
-    allow(dead_code, reason = "P4 runner consumes the P2 selector registry")
-)]
 impl<P: Clone + Eq> MintedSelectorRegistry<P> {
     pub(crate) fn observe_append(
         &mut self,
