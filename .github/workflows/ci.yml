@@ -66,6 +66,10 @@ jobs:
           cargo test --locked -p glade-discover-sim --test all_scenarios
           cargo test --locked -p glade-discover-sim --test deterministic_replay
       - name: Install nightly for fuzz target compilation
-        uses: dtolnay/rust-toolchain@nightly-2026-02-28
+        # The action resolves only branch refs (stable, nightly, master); a dated
+        # nightly goes in its toolchain input.
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-02-28
       - name: Compile nested fuzz workspace
         run: cargo +nightly-2026-02-28 check --locked --manifest-path fuzz/Cargo.toml --bins
