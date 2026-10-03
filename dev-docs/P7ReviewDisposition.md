@@ -1,14 +1,12 @@
 # P7 Review Disposition
 
-Status: implementation review complete; initial repository commit pending user
-direction
-Date: 2026-07-17
+Status: implementation review and initial repository packaging complete
+Date: 2026-07-18
 Design baseline: vendored Glade discovery v3.1 semantic freeze, SHA-256
 `d73b765c76e4c3bebb98bd7bce1f6fc2e7f99d2f9215c3bcd13ed683cab864af`
 
-Packaging note: this new member repository has no initial commit and all release
-artifacts remain untracked. A commit is required before the reviewed tree can be
-reproduced from version control.
+Packaging baseline: commit `65fc18b`, tag `glade/discover-impl-stage1`, on
+`main` and published to `origin/main`.
 
 ## Review method
 

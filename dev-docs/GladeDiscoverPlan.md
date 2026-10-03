@@ -1,7 +1,7 @@
 # Glade Discover Implementation Plan
 
-Status: P0 through P7 implementation and review complete (2026-07-17);
-initial repository commit pending user direction
+Status: P0 through P7 implementation, review, and repository packaging complete
+(2026-07-18); baseline commit `65fc18b`, tag `glade/discover-impl-stage1`
 Target: `glade-discover`, a Rust member repo of `glade-wz`
 Normative design: `../dev-docs/glade/GladeDiscoveryDesign.md` in the parent
 `glade-wz` workspace, v3.1 semantic freeze

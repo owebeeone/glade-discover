@@ -3,7 +3,8 @@
 Status: P7 implementation and review complete. All 24 primary scenarios, P5
 hardening sweeps, P6 adapter integration tests, and P7 crash-safety regressions
 are green; INV-D0 through INV-D6 have executable evidence at their assigned
-layer. Initial repository commit is pending user direction.
+layer. The reviewed baseline is commit `65fc18b`, tagged
+`glade/discover-impl-stage1`.
 
 The v3.1 semantic freeze is authoritative. This file assigns one primary
 acceptance scenario to each frozen scenario name and identifies the package
